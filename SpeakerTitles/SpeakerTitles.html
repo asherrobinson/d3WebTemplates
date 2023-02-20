@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speaker Title Block</title>
+
+    <script id="defaultsScriptTag" src="defaults.js"></script>
+    <script id="namesScriptTag"></script>
+
+    <script>
+
+        let textModuleNames = null;
+
+        const textModuleInternals = {
+
+            settings : {
+                textColor1   : 'white',
+                textColor2   : 'white',
+                shadowColor1 : 'black',
+                shadowColor2 : 'black',
+                centered     : 0,
+                dropShadows  : false,
+                font         : '',
+                shadowDistX  : 0,
+                shadowDistY  : 0,
+                shadowBlur   : 0,
+            },
+
+            useFileForTextStrings : false,
+            stringsFilename : '',
+            stringsFromFile : [],
+            stringsIndex    : 0,
+
+            textLine1 : '',
+            textLine2 : '',
+
+            reloadTextFromFile : function (index) {
+
+                if (textModuleInternals.useFileForTextStrings) {
+
+                    if ( !(index in textModuleInternals.stringsFromFile) ) {
+
+                        textModuleInternals.textLine1 = '';
+                        textModuleInternals.textLine2 = '';
+                    } else {
+
+                        textModuleInternals.textLine1 = textModuleInternals.stringsFromFile[index]['name'];
+                        textModuleInternals.textLine2 = textModuleInternals.stringsFromFile[index]['subtitle'];
+                    }
+
+                    textModuleInternals.stringsIndex = index;
+                    textModuleInternals.pushTextUpdate();
+                }
+            },
+
+            pushTextUpdate : function () {
+
+                document.getElementById('heading').innerHTML = textModuleInternals.textLine1
+                document.getElementById('subtitle').innerHTML = textModuleInternals.textLine2
+            },
+
+            updateTextStyle : function () {
+
+                const _ = textModuleInternals.settings;
+
+                let text1StyleString = `color: ${_.textColor1};`;
+                let text2StyleString = `color: ${_.textColor2};`;
+
+                const parseDistNumber = function (number) {
+
+                    if (isNaN(number)) { return number; }
+
+                    if (number > 0) { return number + 'px'; }
+
+                    return 0;
+                };
+
+                if (_.dropShadows) {
+
+                    text1StyleString += ` text-shadow: ${parseDistNumber(_.shadowDistX)} ${parseDistNumber(_.shadowDistY)} ${parseDistNumber(_.shadowBlur)} ${_.shadowColor1};`;
+                    text2StyleString += ` text-shadow: ${parseDistNumber(_.shadowDistX)} ${parseDistNumber(_.shadowDistY)} ${parseDistNumber(_.shadowBlur)} ${_.shadowColor2};`;
+                }
+
+                if (_.font) {
+
+                    text1StyleString += ` font-family: ${_.font}, sans-serif`;
+                    text2StyleString += ` font-family: ${_.font}, sans-serif`;
+                }
+
+                document.querySelector('#heading').setAttribute('style', text1StyleString);
+                document.querySelector('#subtitle').setAttribute('style', text2StyleString);
+            },
+
+            updateTextValue : function (index, newValue) {
+
+                if (textModuleInternals.useFileForTextStrings) { return; }
+
+                textModuleInternals[`textLine${index}`] = newValue;
+                textModuleInternals.pushTextUpdate();
+            },
+
+            updateStringsFile : function (filename) {
+
+                if (filename === textModuleInternals.stringsFilename) { return; }
+
+                document.getElementById('namesScriptTag').remove();
+
+                textModuleNames = null;
+                textModuleInternals.stringsFromFile = [];
+
+                const scriptElem = document.createElement('script');
+                scriptElem.id = 'namesScriptTag';
+                scriptElem.src = `${filename}.js`;
+
+                try {
+                    document.body.appendChild(scriptElem);
+                } catch { }
+
+                textModuleInternals.stringsFilename = filename;
+
+                try {
+                    textModuleInternals.reloadTextFromFile(textModuleInternals.stringsIndex);
+                } catch { }
+
+            },
+
+            refreshFileStrings : function () {
+
+                if (!textModuleInternals.stringsFromFile.length) {
+
+                    if (textModuleNames) {
+
+                        textModuleInternals.stringsFromFile = [ ... textModuleNames ];
+                    }
+                }
+            },
+
+            updateAlignment : function () {
+
+                document.getElementById('text_container').classList.toggle('center', !!textModuleInternals.settings.centered);
+            },
+
+            loadDefaults : function () {
+
+                document.getElementById('defaultsScriptTag').removeAttribute('src');
+                document.getElementById('defaultsScriptTag').setAttribute('src', 'defaults.js');
+
+                textModuleInternals.settings = {
+                    ... textModuleInternals.settings,
+                    ... textModuleDefaults
+                };
+
+                textModuleInternals.updateAlignment();
+                textModuleInternals.updateTextStyle();
+            }
+        }
+
+        // noinspection ES6ConvertVarToLetConst
+        var d3 = {
+
+            // Text Properties
+            textLine1:    function (textVal) { textModuleInternals.updateTextValue(1, textVal); },
+            textLine2:    function (textVal) { textModuleInternals.updateTextValue(2, textVal); },
+            textColor1:   function (colorString) { textModuleInternals.settings.textColor1 = colorString; },
+            textColor2:   function (colorString) { textModuleInternals.settings.textColor2 = colorString; },
+            shadowColor1: function (colorString) { textModuleInternals.settings.shadowColor1 = colorString; },
+            shadowColor2: function (colorString) { textModuleInternals.settings.shadowColor2 = colorString; },
+            font:         function (fontName) { textModuleInternals.settings.font = fontName; },
+            filename:     function (filename) { textModuleInternals.updateStringsFile(filename) },
+
+
+            // Number Properties
+            useFile:          function (enable)   { textModuleInternals.useFileForTextStrings = !!enable },
+            fileTextIndex:    function (index)    { textModuleInternals.reloadTextFromFile(index) },
+            centered:         function (enable)   { textModuleInternals.settings.centered = !!enable; textModuleInternals.updateAlignment(); },
+            dropShadows:      function (enable)   { textModuleInternals.settings.dropShadows = !!enable },
+            shadowDistX:      function (dist)   { textModuleInternals.settings.shadowDistX = dist; },
+            shadowDistY:      function (dist)   { textModuleInternals.settings.shadowDistY = dist; },
+            shadowBlur:       function (dist)   { textModuleInternals.settings.shadowBlur = dist; },
+        };
+
+    </script>
+
+    <style>
+
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .center {
+            width: 100%;
+            text-align: center;
+        }
+
+        #heading {
+            font-family: Arial,sans-serif;
+            font-size: 15em;
+            color: white;
+        }
+
+        #subtitle {
+            font-family: Arial,sans-serif;
+            font-size: 8em;
+            color: white;
+        }
+
+    </style>
+
+</head>
+
+<body style="background:rgba(0, 0, 0, 0); margin:0;">
+
+    <div class="container">
+        <div id="text_container" class="center">
+            <p id="heading"></p>
+            <p id="subtitle"></p>
+        </div>
+    </div>
+
+    <script>
+        setInterval(function () {
+            textModuleInternals.updateTextStyle();
+            textModuleInternals.refreshFileStrings();
+        }, 32);
+
+        textModuleInternals.loadDefaults();
+    </script>
+
+</body>
+
+</html>
