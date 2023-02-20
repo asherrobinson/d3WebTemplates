@@ -158,25 +158,42 @@
         // noinspection ES6ConvertVarToLetConst
         var d3 = {
 
-            // Text Properties
-            textLine1:    function (textVal) { textModuleInternals.updateTextValue(1, textVal); },
-            textLine2:    function (textVal) { textModuleInternals.updateTextValue(2, textVal); },
-            textColor1:   function (colorString) { textModuleInternals.settings.textColor1 = colorString; },
-            textColor2:   function (colorString) { textModuleInternals.settings.textColor2 = colorString; },
-            shadowColor1: function (colorString) { textModuleInternals.settings.shadowColor1 = colorString; },
-            shadowColor2: function (colorString) { textModuleInternals.settings.shadowColor2 = colorString; },
-            font:         function (fontName) { textModuleInternals.settings.font = fontName; },
-            filename:     function (filename) { textModuleInternals.updateStringsFile(filename) },
+            text : {
+                aggressiveUpdateText : function (value) { /* do something every frame */ }
+            },
 
+            number : {
+                aggressiveUpdateNumber : function (value) { /* do something every frame */ }
+            },
 
-            // Number Properties
-            useFile:          function (enable)   { textModuleInternals.useFileForTextStrings = !!enable },
-            fileTextIndex:    function (index)    { textModuleInternals.reloadTextFromFile(index) },
-            centered:         function (enable)   { textModuleInternals.settings.centered = !!enable; textModuleInternals.updateAlignment(); },
-            dropShadows:      function (enable)   { textModuleInternals.settings.dropShadows = !!enable },
-            shadowDistX:      function (dist)   { textModuleInternals.settings.shadowDistX = dist; },
-            shadowDistY:      function (dist)   { textModuleInternals.settings.shadowDistY = dist; },
-            shadowBlur:       function (dist)   { textModuleInternals.settings.shadowBlur = dist; },
+            lazyUpdate: {
+                // Called only when value in d3 module changes
+
+                text : {
+
+                    // Text Properties
+                    textLine1:    function (textVal) { textModuleInternals.updateTextValue(1, textVal); },
+                    textLine2:    function (textVal) { textModuleInternals.updateTextValue(2, textVal); },
+                    textColor1:   function (colorString) { textModuleInternals.settings.textColor1 = colorString; },
+                    textColor2:   function (colorString) { textModuleInternals.settings.textColor2 = colorString; },
+                    shadowColor1: function (colorString) { textModuleInternals.settings.shadowColor1 = colorString; },
+                    shadowColor2: function (colorString) { textModuleInternals.settings.shadowColor2 = colorString; },
+                    font:         function (fontName) { textModuleInternals.settings.font = fontName; },
+                    filename:     function (filename) { textModuleInternals.updateStringsFile(filename) },
+                },
+
+                number : {
+
+                    // Number Properties
+                    useFile:          function (enable)   { textModuleInternals.useFileForTextStrings = !!enable },
+                    fileTextIndex:    function (index)    { textModuleInternals.reloadTextFromFile(index) },
+                    centered:         function (enable)   { textModuleInternals.settings.centered = !!enable; textModuleInternals.updateAlignment(); },
+                    dropShadows:      function (enable)   { textModuleInternals.settings.dropShadows = !!enable },
+                    shadowDistX:      function (dist)   { textModuleInternals.settings.shadowDistX = dist; },
+                    shadowDistY:      function (dist)   { textModuleInternals.settings.shadowDistY = dist; },
+                    shadowBlur:       function (dist)   { textModuleInternals.settings.shadowBlur = dist; },
+                }
+            }
         };
 
     </script>
