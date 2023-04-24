@@ -24,6 +24,7 @@
                 shadowDistX  : 0,
                 shadowDistY  : 0,
                 shadowBlur   : 0,
+                fadeTime     : 0,
             },
 
             useFileForTextStrings : false,
@@ -33,6 +34,9 @@
 
             textLine1 : '',
             textLine2 : '',
+
+            existingText1 : '',
+            existingText2 : '',
 
             reloadTextFromFile : function (index) {
 
@@ -55,8 +59,58 @@
 
             pushTextUpdate : function () {
 
-                document.getElementById('heading').innerHTML = textModuleInternals.textLine1
-                document.getElementById('subtitle').innerHTML = textModuleInternals.textLine2
+                if (textModuleInternals.settings.fadeTime) {
+
+                    const header = document.getElementById('heading');
+                    const subtitle = document.getElementById('subtitle');
+
+                    if (textModuleInternals.existingText1 !== textModuleInternals.textLine1) {
+
+                        const outgoing = document.getElementById('heading').getElementsByTagName('span');
+                        Array.from(outgoing).forEach((elem) => {
+                            elem.style.animationDuration = textModuleInternals.settings.fadeTime + 's';
+                            elem.style.animationName = 'fade-out';
+                            elem.classList.add('outgoing');
+                        });
+
+                        const incoming = document.createElement('span');
+                        incoming.innerText = textModuleInternals.textLine1;
+
+                        header.appendChild(incoming);
+                        incoming.style.animationDuration = textModuleInternals.settings.fadeTime + 's';
+                        incoming.style.animationName = 'fade-in';
+
+                        textModuleInternals.existingText1 = textModuleInternals.textLine1;
+
+                        setTimeout(() => { Array.from(document.getElementById('heading').getElementsByClassName('outgoing')).forEach((elem) => { elem.remove(); })}, textModuleInternals.settings.fadeTime * 1000 + 50);
+                    }
+
+                    if (textModuleInternals.existingText2 !== textModuleInternals.textLine2) {
+
+                        const outgoing = document.getElementById('subtitle').getElementsByTagName('span');
+                        Array.from(outgoing).forEach((elem) => {
+                            elem.style.animationDuration = textModuleInternals.settings.fadeTime + 's';
+                            elem.style.animationName = 'fade-out';
+                            elem.classList.add('outgoing');
+                        });
+
+                        const incoming = document.createElement('span');
+                        incoming.innerText = textModuleInternals.textLine2;
+
+                        subtitle.appendChild(incoming);
+                        incoming.style.animationDuration = textModuleInternals.settings.fadeTime + 's';
+                        incoming.style.animationName = 'fade-in';
+
+                        textModuleInternals.existingText2 = textModuleInternals.textLine2;
+
+                        setTimeout(() => { Array.from(document.getElementById('subtitle').getElementsByClassName('outgoing')).forEach((elem) => { elem.remove(); })}, textModuleInternals.settings.fadeTime * 1000 + 50);
+                    }
+
+                } else {
+
+                    document.getElementById('heading').innerHTML = `<span>${textModuleInternals.textLine1}</span>`
+                    document.getElementById('subtitle').innerHTML = `<span>${textModuleInternals.textLine2}</span>`
+                }
             },
 
             updateTextStyle : function () {
@@ -155,7 +209,7 @@
             }
         }
 
-        // noinspection ES6ConvertVarToLetConst
+        // noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
         var d3 = {
 
             // Text Properties
@@ -177,16 +231,12 @@
             shadowDistX:      function (dist)   { textModuleInternals.settings.shadowDistX = dist; },
             shadowDistY:      function (dist)   { textModuleInternals.settings.shadowDistY = dist; },
             shadowBlur:       function (dist)   { textModuleInternals.settings.shadowBlur = dist; },
+            fadeTime:         function (seconds) { textModuleInternals.settings.fadeTime = seconds; },
         };
 
     </script>
 
     <style>
-
-        p {
-            margin: 0;
-            padding: 0;
-        }
 
         .container {
             width: 100%;
@@ -198,6 +248,11 @@
         .center {
             width: 100%;
             text-align: center;
+        }
+
+        #text_container div {
+            position: relative;
+            margin-bottom: 1em;
         }
 
         #heading {
@@ -212,6 +267,31 @@
             color: white;
         }
 
+        #text_container div span {
+            position: absolute;
+            white-space: nowrap;
+            animation-fill-mode: forwards;
+            animation-iteration-count: 1;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fade-out {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
     </style>
 
 </head>
@@ -220,8 +300,8 @@
 
     <div class="container">
         <div id="text_container" class="center">
-            <p id="heading"></p>
-            <p id="subtitle"></p>
+            <div id="heading"></div>
+            <div id="subtitle"></div>
         </div>
     </div>
 

@@ -27,6 +27,7 @@
  * shadowDistX      Offset horizontally for drop shadows (interpreted as px)
  * shadowDistY      Offset vertically for drop shadows (interpreted as px)
  * shadowBlur       Blur distance for drop shadows (interpreted as px)
+ * fadeTime         Cross-fade time between text updates
  *
  */
 
@@ -49,5 +50,9 @@ const textModuleDefaults = {
   // Specify distances for shadows, in pixels (default) or with a valid CSS dimension string, ex: '1em', '0.2rem', etc.
   shadowDistX  : 5,
   shadowDistY  : 5,
-  shadowBlur   : 10
+  shadowBlur   : 10,
+
+  // Specify Fade Time in seconds
+  fadeTime     : 0,
+
 };
