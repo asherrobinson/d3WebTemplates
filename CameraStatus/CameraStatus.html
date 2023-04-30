@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Camera Status</title>
+
+    <script id="defaultsScriptTag" src="defaults.js"></script>
+
+    <script>
+
+        const dynamicStyleSheet = document.createElement('style');
+        document.head.appendChild(dynamicStyleSheet);
+
+        const camStatusModuleInternals = {
+
+            settings : {
+                textColor       : 'white',
+                fontFamily      : 'sans-serif',
+                fontSize        : '2em',
+            },
+
+            data : {
+                1 : {name : '', preset: 0, char: '', desc: ''},
+                2 : {name : '', preset: 0, char: '', desc: ''},
+                3 : {name : '', preset: 0, char: '', desc: ''},
+                4 : {name : '', preset: 0, char: '', desc: ''},
+                5 : {name : '', preset: 0, char: '', desc: ''},
+                6 : {name : '', preset: 0, char: '', desc: ''},
+                7 : {name : '', preset: 0, char: '', desc: ''},
+                8 : {name : '', preset: 0, char: '', desc: ''},
+            },
+
+            updateCamName : function (index, name) {
+
+                if (camStatusModuleInternals.data[index].name !== name) {
+                    camStatusModuleInternals.data[index].name = name;
+                    camStatusModuleInternals.updateNames();
+                }
+            },
+
+            updatePreset : function (index, value) {
+
+                if (camStatusModuleInternals.data[index].preset !== value) {
+                    camStatusModuleInternals.data[index].preset = value;
+                    camStatusModuleInternals.pushPresetUpdate(index);
+                }
+            },
+
+            updateNames : function () {
+
+                Object.keys(camStatusModuleInternals.data).forEach((prjNum) => {
+
+                    document.getElementById(`camName_${prjNum}`).innerText = camStatusModuleInternals.data[prjNum].name;
+
+                    if (camStatusModuleInternals.data[prjNum].name === '') {
+
+                        document.getElementById(`statusContainer_${prjNum}`).style.display = 'none';
+                    } else {
+
+                        document.getElementById(`statusContainer_${prjNum}`).style.display = 'table-row';
+                    }
+                });
+            },
+
+            updateStyle : function () {
+
+                const _ = camStatusModuleInternals.settings;
+                const ss = dynamicStyleSheet.sheet;
+
+                ss.insertRule(`.container { color: ${ _.textColor }`, ss.cssRules.length);
+                ss.insertRule(`.prj_bright { border-color: ${ _.barOutlineColor }`, ss.cssRules.length);
+                ss.insertRule(`.prj_bright_bar { background-color: ${ _.barColor }`, ss.cssRules.length);
+
+                ss.insertRule(`.container { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+                ss.insertRule(`.container { font-size: ${ _.fontSize }`, ss.cssRules.length);
+
+            },
+
+            pushPresetUpdate : function (index) {
+
+                const presetNum = document.getElementById(`camPreset_${index}`);
+                presetNum.innerHTML = `<span>${camStatusModuleInternals.data[index].preset}</span>`;
+            },
+
+            loadDefaults : function () {
+
+                document.getElementById('defaultsScriptTag').removeAttribute('src');
+                document.getElementById('defaultsScriptTag').setAttribute('src', 'defaults.js');
+
+                camStatusModuleInternals.settings = {
+                    ... camStatusModuleInternals.settings,
+                    ... camStatusModuleDefaults
+                };
+
+                for (let i = 1; i<=8; i++) {
+                    if (camStatusModuleInternals.settings.hasOwnProperty(`camName${i}`)) {
+                        camStatusModuleInternals.updateCamName(i, camStatusModuleInternals.settings[`camName${i}`]);
+                    }
+                }
+
+                camStatusModuleInternals.updateStyle();
+            }
+        }
+
+        // noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
+        var d3 = {
+
+            // Text Properties
+            camName1: function (textVal) { camStatusModuleInternals.updateCamName(1, textVal); },
+            camName2: function (textVal) { camStatusModuleInternals.updateCamName(2, textVal); },
+            camName3: function (textVal) { camStatusModuleInternals.updateCamName(3, textVal); },
+            camName4: function (textVal) { camStatusModuleInternals.updateCamName(4, textVal); },
+            camName5: function (textVal) { camStatusModuleInternals.updateCamName(5, textVal); },
+            camName6: function (textVal) { camStatusModuleInternals.updateCamName(6, textVal); },
+            camName7: function (textVal) { camStatusModuleInternals.updateCamName(7, textVal); },
+            camName8: function (textVal) { camStatusModuleInternals.updateCamName(8, textVal); },
+
+            // Number Properties
+            camPreset1: function (value) { camStatusModuleInternals.updatePreset(1, value) },
+            camPreset2: function (value) { camStatusModuleInternals.updatePreset(2, value) },
+            camPreset3: function (value) { camStatusModuleInternals.updatePreset(3, value) },
+            camPreset4: function (value) { camStatusModuleInternals.updatePreset(4, value) },
+            camPreset5: function (value) { camStatusModuleInternals.updatePreset(5, value) },
+            camPreset6: function (value) { camStatusModuleInternals.updatePreset(6, value) },
+            camPreset7: function (value) { camStatusModuleInternals.updatePreset(7, value) },
+            camPreset8: function (value) { camStatusModuleInternals.updatePreset(8, value) },
+
+        };
+
+    </script>
+
+    <style>
+
+        .container {
+            width: 98vw;
+            height: 98vh;
+            max-height: 98vh;
+            display: table;
+            padding: 1vh 1vw;
+        }
+
+        .statusContainer {
+            width: 100%;
+            display: table-row;
+        }
+
+        .statusContainer div {
+            display: table-cell;
+            padding: 0.25em;
+            vertical-align: middle;
+        }
+
+        #statusContainer_0 {
+            display: table-header-group;
+            font-size: 0.75em;
+            font-style: italic;
+            font-weight: bold;
+            color: #999;
+        }
+
+        .cam_preset span {
+            border: 2px solid white;
+            font-size: 1.75em;
+            border-radius: 1rem;
+            text-align: center;
+            padding: 0.1rem 2rem;
+        }
+
+    </style>
+
+</head>
+
+<body style="background:rgba(0, 0, 0, 0); margin:0;">
+
+    <div class="container">
+
+        <div id="statusContainer_0" class="statusContainer">
+            <div id="camName_0" class="prj_name">Camera</div>
+            <div id="camPreset_0" class="cam_preset">Preset #</div>
+            <div id="camChar_0" class="cam_char">Character</div>
+            <div id="camDesc_0" class="cam_desc">Description</div>
+        </div>
+
+        <div id="statusContainer_1" class="statusContainer">
+            <div id="camName_1" class="prj_name"></div>
+            <div id="camPreset_1" class="cam_preset"></div>
+            <div id="camChar_1" class="cam_char"></div>
+            <div id="camDesc_1" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_2" class="statusContainer">
+            <div id="camName_2" class="prj_name"></div>
+            <div id="camPreset_2" class="cam_preset"></div>
+            <div id="camChar_2" class="cam_char"></div>
+            <div id="camDesc_2" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_3" class="statusContainer">
+            <div id="camName_3" class="prj_name"></div>
+            <div id="camPreset_3" class="cam_preset"></div>
+            <div id="camChar_3" class="cam_char"></div>
+            <div id="camDesc_3" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_4" class="statusContainer">
+            <div id="camName_4" class="prj_name"></div>
+            <div id="camPreset_4" class="cam_preset"></div>
+            <div id="camChar_4" class="cam_char"></div>
+            <div id="camDesc_4" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_5" class="statusContainer">
+            <div id="camName_5" class="prj_name"></div>
+            <div id="camPreset_5" class="cam_preset"></div>
+            <div id="camChar_5" class="cam_char"></div>
+            <div id="camDesc_5" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_6" class="statusContainer">
+            <div id="camName_6" class="prj_name"></div>
+            <div id="camPreset_6" class="cam_preset"></div>
+            <div id="camChar_6" class="cam_char"></div>
+            <div id="camDesc_6" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_7" class="statusContainer">
+            <div id="camName_7" class="prj_name"></div>
+            <div id="camPreset_7" class="cam_preset"></div>
+            <div id="camChar_7" class="cam_char"></div>
+            <div id="camDesc_7" class="cam_desc"></div>
+        </div>
+
+        <div id="statusContainer_8" class="statusContainer">
+            <div id="camName_8" class="prj_name"></div>
+            <div id="camPreset_8" class="cam_preset"></div>
+            <div id="camChar_8" class="cam_char"></div>
+            <div id="camDesc_8" class="cam_desc"></div>
+        </div>
+
+    </div>
+
+    <script>
+
+        camStatusModuleInternals.loadDefaults();
+
+    </script>
+
+</body>
+
+</html>
