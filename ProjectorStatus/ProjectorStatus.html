@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projector Status</title>
+
+    <script id="defaultsScriptTag" src="defaults.js"></script>
+
+    <script>
+
+        const dynamicStyleSheet = document.createElement('style');
+        document.head.appendChild(dynamicStyleSheet);
+
+        const prjStatusModuleInternals = {
+
+            settings : {
+                textColor       : 'white',
+                barOutlineColor : 'white',
+                barColor        : 'white',
+                fontFamily      : 'sans-serif',
+                fontSize        : '2em',
+            },
+
+            data : {
+                1 : {name : '', brightness: 0},
+                2 : {name : '', brightness: 0},
+                3 : {name : '', brightness: 0},
+                4 : {name : '', brightness: 0},
+                5 : {name : '', brightness: 0},
+                6 : {name : '', brightness: 0},
+                7 : {name : '', brightness: 0},
+                8 : {name : '', brightness: 0},
+            },
+
+            updatePrjName : function (index, name) {
+
+                if (prjStatusModuleInternals.data[index].name !== name) {
+                    prjStatusModuleInternals.data[index].name = name;
+                    prjStatusModuleInternals.updateNames();
+                }
+            },
+
+            updateBright : function (index, value) {
+
+                if (prjStatusModuleInternals.data[index].brightness !== value) {
+                    prjStatusModuleInternals.data[index].brightness = value;
+                    prjStatusModuleInternals.pushBrightUpdate(index);
+                }
+            },
+
+            updateNames : function () {
+
+                Object.keys(prjStatusModuleInternals.data).forEach((prjNum) => {
+
+                    document.getElementById(`prjName_${prjNum}`).innerText = prjStatusModuleInternals.data[prjNum].name;
+
+                    if (prjStatusModuleInternals.data[prjNum].name === '') {
+
+                        document.getElementById(`prjBright_${prjNum}`).style.display = 'none';
+                    } else {
+
+                        document.getElementById(`prjBright_${prjNum}`).style.display = 'block';
+                    }
+                });
+            },
+
+            updateStyle : function () {
+
+                const _ = prjStatusModuleInternals.settings;
+                const ss = dynamicStyleSheet.sheet;
+
+                ss.insertRule(`.container { color: ${ _.textColor }`, ss.cssRules.length);
+                ss.insertRule(`.prj_bright { border-color: ${ _.barOutlineColor }`, ss.cssRules.length);
+                ss.insertRule(`.prj_bright_bar { background-color: ${ _.barColor }`, ss.cssRules.length);
+
+                ss.insertRule(`.prj_name { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+                ss.insertRule(`.prj_name { font-size: ${ _.fontSize }`, ss.cssRules.length);
+
+            },
+
+            pushBrightUpdate : function (index) {
+
+                const bar = document.getElementById(`prjBrightBar_${index}`);
+                bar.style.width = (100 * prjStatusModuleInternals.data[index].brightness) + "%";
+            },
+
+            loadDefaults : function () {
+
+                document.getElementById('defaultsScriptTag').removeAttribute('src');
+                document.getElementById('defaultsScriptTag').setAttribute('src', 'defaults.js');
+
+                prjStatusModuleInternals.settings = {
+                    ... prjStatusModuleInternals.settings,
+                    ... prjStatusModuleDefaults
+                };
+
+                prjStatusModuleInternals.updateStyle();
+            }
+        }
+
+        // noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
+        var d3 = {
+
+            // Text Properties
+            prjName1: function (textVal) { prjStatusModuleInternals.updatePrjName(1, textVal); },
+            prjName2: function (textVal) { prjStatusModuleInternals.updatePrjName(2, textVal); },
+            prjName3: function (textVal) { prjStatusModuleInternals.updatePrjName(3, textVal); },
+            prjName4: function (textVal) { prjStatusModuleInternals.updatePrjName(4, textVal); },
+            prjName5: function (textVal) { prjStatusModuleInternals.updatePrjName(5, textVal); },
+            prjName6: function (textVal) { prjStatusModuleInternals.updatePrjName(6, textVal); },
+            prjName7: function (textVal) { prjStatusModuleInternals.updatePrjName(7, textVal); },
+            prjName8: function (textVal) { prjStatusModuleInternals.updatePrjName(8, textVal); },
+
+            // Number Properties
+            prjBright1: function (value) { prjStatusModuleInternals.updateBright(1, value) },
+            prjBright2: function (value) { prjStatusModuleInternals.updateBright(2, value) },
+            prjBright3: function (value) { prjStatusModuleInternals.updateBright(3, value) },
+            prjBright4: function (value) { prjStatusModuleInternals.updateBright(4, value) },
+            prjBright5: function (value) { prjStatusModuleInternals.updateBright(5, value) },
+            prjBright6: function (value) { prjStatusModuleInternals.updateBright(6, value) },
+            prjBright7: function (value) { prjStatusModuleInternals.updateBright(7, value) },
+            prjBright8: function (value) { prjStatusModuleInternals.updateBright(8, value) },
+
+        };
+
+    </script>
+
+    <style>
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .statusContainer {
+            width: 100%;
+            flex-grow: 1;
+            padding: 1rem;
+            display: flex;
+            min-height: calc(100%/8 - 2em);
+        }
+
+        .prj_bright {
+            display: inline-block;
+            position: relative;
+            border: 3px solid;
+            border-radius: 1em;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .prj_bright_bar {
+            position: absolute;
+            height: 200%;
+        }
+
+        .prj_name {
+            min-width: 20%;
+            padding-right: 2em;
+        }
+
+    </style>
+
+</head>
+
+<body style="background:rgba(0, 0, 0, 0); margin:0;">
+
+    <div class="container">
+
+        <div id="statusContainer_1" class="statusContainer">
+            <div id="prjName_1" class="prj_name"></div>
+            <div id="prjBright_1" class="prj_bright">
+                <div id="prjBrightBar_1" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_2" class="statusContainer">
+            <div id="prjName_2" class="prj_name"></div>
+            <div id="prjBright_2" class="prj_bright">
+                <div id="prjBrightBar_2" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_3" class="statusContainer">
+            <div id="prjName_3" class="prj_name"></div>
+            <div id="prjBright_3" class="prj_bright">
+                <div id="prjBrightBar_3" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_4" class="statusContainer">
+            <div id="prjName_4" class="prj_name"></div>
+            <div id="prjBright_4" class="prj_bright">
+                <div id="prjBrightBar_4" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_5" class="statusContainer">
+            <div id="prjName_5" class="prj_name"></div>
+            <div id="prjBright_5" class="prj_bright">
+                <div id="prjBrightBar_5" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_6" class="statusContainer">
+            <div id="prjName_6" class="prj_name"></div>
+            <div id="prjBright_6" class="prj_bright">
+                <div id="prjBrightBar_6" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_7" class="statusContainer">
+            <div id="prjName_7" class="prj_name"></div>
+            <div id="prjBright_7" class="prj_bright">
+                <div id="prjBrightBar_7" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+        <div id="statusContainer_8" class="statusContainer">
+            <div id="prjName_8" class="prj_name"></div>
+            <div id="prjBright_8" class="prj_bright">
+                <div id="prjBrightBar_8" class="prj_bright_bar"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        prjStatusModuleInternals.loadDefaults();
+
+    </script>
+
+</body>
+
+</html>
