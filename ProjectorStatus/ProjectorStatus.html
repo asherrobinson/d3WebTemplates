@@ -8,6 +8,15 @@
 
     <script>
 
+		/**
+		* DISCOPIXEL PRODUCTIONS INC.
+		* D3ProjectorStatus Web Module
+		* Author: A. Robinson
+		* Updated: 10 JUN 2024
+		* Reproduction & Redistribution prohibited without express written permission
+		* © 2024 - All rights reserved
+		*/
+
         const dynamicStyleSheet = document.createElement('style');
         document.head.appendChild(dynamicStyleSheet);
 
@@ -75,13 +84,18 @@
 
                 ss.insertRule(`.prj_name { font-family: ${ _.fontFamily }`, ss.cssRules.length);
                 ss.insertRule(`.prj_name { font-size: ${ _.fontSize }`, ss.cssRules.length);
-
+		        ss.insertRule(`.prj_bright_val { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+                ss.insertRule(`.prj_bright_val { font-size: ${ _.fontSize }`, ss.cssRules.length);
             },
 
             pushBrightUpdate : function (index) {
 
+                const brightness = (100 * prjStatusModuleInternals.data[index].brightness) + '';
+
                 const bar = document.getElementById(`prjBrightBar_${index}`);
-                bar.style.width = (100 * prjStatusModuleInternals.data[index].brightness) + "%";
+                bar.style.width = brightness + '%';
+
+                document.getElementById(`prjBrightVal_${index}`).innerText = parseInt(brightness, 10) + "%";
             },
 
             loadDefaults : function () {
@@ -152,6 +166,7 @@
             border-radius: 1em;
             flex-grow: 1;
             overflow: hidden;
+	        width: 70%;
         }
 
         .prj_bright_bar {
@@ -160,7 +175,12 @@
         }
 
         .prj_name {
-            min-width: 20%;
+            min-width: 25%;
+            padding-right: 2em;
+        }
+
+        .prj_bright_val {
+            min-width: 5%;
             padding-right: 2em;
         }
 
@@ -174,6 +194,7 @@
 
         <div id="statusContainer_1" class="statusContainer">
             <div id="prjName_1" class="prj_name"></div>
+            <div id="prjBrightVal_1" class="prj_bright_val"></div>
             <div id="prjBright_1" class="prj_bright">
                 <div id="prjBrightBar_1" class="prj_bright_bar"></div>
             </div>
@@ -181,6 +202,7 @@
 
         <div id="statusContainer_2" class="statusContainer">
             <div id="prjName_2" class="prj_name"></div>
+            <div id="prjBrightVal_2" class="prj_bright_val"></div>
             <div id="prjBright_2" class="prj_bright">
                 <div id="prjBrightBar_2" class="prj_bright_bar"></div>
             </div>
@@ -188,6 +210,7 @@
 
         <div id="statusContainer_3" class="statusContainer">
             <div id="prjName_3" class="prj_name"></div>
+            <div id="prjBrightVal_3" class="prj_bright_val"></div>
             <div id="prjBright_3" class="prj_bright">
                 <div id="prjBrightBar_3" class="prj_bright_bar"></div>
             </div>
@@ -195,6 +218,7 @@
 
         <div id="statusContainer_4" class="statusContainer">
             <div id="prjName_4" class="prj_name"></div>
+            <div id="prjBrightVal_4" class="prj_bright_val"></div>
             <div id="prjBright_4" class="prj_bright">
                 <div id="prjBrightBar_4" class="prj_bright_bar"></div>
             </div>
@@ -202,6 +226,7 @@
 
         <div id="statusContainer_5" class="statusContainer">
             <div id="prjName_5" class="prj_name"></div>
+            <div id="prjBrightVal_5" class="prj_bright_val"></div>
             <div id="prjBright_5" class="prj_bright">
                 <div id="prjBrightBar_5" class="prj_bright_bar"></div>
             </div>
@@ -209,6 +234,7 @@
 
         <div id="statusContainer_6" class="statusContainer">
             <div id="prjName_6" class="prj_name"></div>
+            <div id="prjBrightVal_6" class="prj_bright_val"></div>
             <div id="prjBright_6" class="prj_bright">
                 <div id="prjBrightBar_6" class="prj_bright_bar"></div>
             </div>
@@ -216,6 +242,7 @@
 
         <div id="statusContainer_7" class="statusContainer">
             <div id="prjName_7" class="prj_name"></div>
+            <div id="prjBrightVal_7" class="prj_bright_val"></div>
             <div id="prjBright_7" class="prj_bright">
                 <div id="prjBrightBar_7" class="prj_bright_bar"></div>
             </div>
@@ -223,6 +250,7 @@
 
         <div id="statusContainer_8" class="statusContainer">
             <div id="prjName_8" class="prj_name"></div>
+            <div id="prjBrightVal_8" class="prj_bright_val"></div>
             <div id="prjBright_8" class="prj_bright">
                 <div id="prjBrightBar_8" class="prj_bright_bar"></div>
             </div>
