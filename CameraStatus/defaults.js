@@ -24,4 +24,12 @@ const camStatusModuleDefaults = {
     camName7 : 'CAM117 (Under USL)',
     camName8 : 'CAM118 (Under USL)',
 
+    dmxAddr1 : 111,
+    dmxAddr2 : 112,
+    dmxAddr3 : 113,
+    dmxAddr4 : 0,
+    dmxAddr5 : 121,
+    dmxAddr6 : 122,
+    dmxAddr7 : 0,
+    dmxAddr8 : 0,
 };

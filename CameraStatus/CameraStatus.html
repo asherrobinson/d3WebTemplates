@@ -8,6 +8,15 @@
 
     <script>
 
+		/**
+		* DISCOPIXEL PRODUCTIONS INC.
+		* D3CameraStatus Web Module
+		* Author: A. Robinson
+		* Updated: 10 JUN 2024
+		* Reproduction & Redistribution prohibited without express written permission
+		* © 2024 - All rights reserved
+		*/
+
         const dynamicStyleSheet = document.createElement('style');
         document.head.appendChild(dynamicStyleSheet);
 
@@ -20,14 +29,14 @@
             },
 
             data : {
-                1 : {name : '', preset: 0, char: '', desc: ''},
-                2 : {name : '', preset: 0, char: '', desc: ''},
-                3 : {name : '', preset: 0, char: '', desc: ''},
-                4 : {name : '', preset: 0, char: '', desc: ''},
-                5 : {name : '', preset: 0, char: '', desc: ''},
-                6 : {name : '', preset: 0, char: '', desc: ''},
-                7 : {name : '', preset: 0, char: '', desc: ''},
-                8 : {name : '', preset: 0, char: '', desc: ''},
+                1 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                2 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                3 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                4 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                5 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                6 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                7 : {name : '', preset: 0, char: '', desc: '', status: 0},
+                8 : {name : '', preset: 0, char: '', desc: '', status: 0},
             },
 
             updateCamName : function (index, name) {
@@ -44,6 +53,23 @@
                     camStatusModuleInternals.data[index].preset = value;
                     camStatusModuleInternals.pushPresetUpdate(index);
                 }
+            },
+
+            updateTallyStatus : function (dmxData) {
+
+                for (let i = 1; i<=8; i++) {
+
+                    let dmxAddr = camStatusModuleDefaults[`dmxAddr${i}`];
+                    if (dmxAddr) {
+
+                        if (dmxData[dmxAddr -1] !== camStatusModuleInternals.data[i].status) {
+
+                            camStatusModuleInternals.data[i].status = dmxData[dmxAddr -1];
+                            this.pushStatusUpdate(i);
+                        }
+                    }
+                }
+
             },
 
             updateNames : function () {
@@ -80,6 +106,34 @@
 
                 const presetNum = document.getElementById(`camPreset_${index}`);
                 presetNum.innerHTML = `<span>${camStatusModuleInternals.data[index].preset}</span>`;
+            },
+
+            pushStatusUpdate : function (index) {
+
+                // noinspection JSUnusedLocalSymbols
+                const STATUS_IDLE = 0;
+                const STATUS_STBY = 127;
+                const STATUS_LIVE = 255;
+
+                const camRow = document.getElementById(`statusContainer_${index}`);
+
+                switch (camStatusModuleInternals.data[index].status) {
+
+                    case (STATUS_LIVE) :
+                        camRow.classList.add('status_live');
+                        camRow.classList.remove('status_stby');
+                        break;
+
+                    case (STATUS_STBY) :
+                        camRow.classList.remove('status_live');
+                        camRow.classList.add('status_stby');
+                        break;
+
+                    default :
+                        camRow.classList.remove('status_stby', 'status_live');
+                        break;
+                }
+
             },
 
             loadDefaults : function () {
@@ -125,6 +179,10 @@
             camPreset7: function (value) { camStatusModuleInternals.updatePreset(7, value) },
             camPreset8: function (value) { camStatusModuleInternals.updatePreset(8, value) },
 
+            dmxUniverses: function(universe, data) {
+
+                camStatusModuleInternals.updateTallyStatus(data[0]);
+            }
         };
 
     </script>
@@ -164,6 +222,16 @@
             border-radius: 1rem;
             text-align: center;
             padding: 0.1rem 2rem;
+        }
+
+        /*noinspection CssUnusedSymbol*/
+        .status_stby {
+            color: limegreen;
+        }
+
+        /*noinspection CssUnusedSymbol*/
+        .status_live {
+            color:red;
         }
 
     </style>
