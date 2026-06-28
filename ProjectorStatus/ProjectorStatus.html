@@ -9,133 +9,207 @@
     <script>
 
 		/**
-		* DISCOPIXEL PRODUCTIONS INC.
-		* D3ProjectorStatus Web Module
-		* Author: A. Robinson
-		* Updated: 10 JUN 2024
-		* Reproduction & Redistribution prohibited without express written permission
-		* © 2024 - All rights reserved
-		*/
+		 * DISCOPIXEL PRODUCTIONS INC.
+		 * D3ProjectorStatus Web Module
+		 * Author: A. Robinson
+		 * Updated: 10 JUN 2024
+		 * Reproduction & Redistribution prohibited without express written permission
+		 * © 2024 - All rights reserved
+		 */
 
-        const dynamicStyleSheet = document.createElement('style');
-        document.head.appendChild(dynamicStyleSheet);
+		const dynamicStyleSheet = document.createElement('style');
+		document.head.appendChild(dynamicStyleSheet);
 
-        const prjStatusModuleInternals = {
+		const prjStatusModuleInternals = {
 
-            settings : {
-                textColor       : 'white',
-                barOutlineColor : 'white',
-                barColor        : 'white',
-                fontFamily      : 'sans-serif',
-                fontSize        : '2em',
-            },
+			settings : {
+				textColor       : 'white',
+				barOutlineColor : 'white',
+				barColor        : 'white',
+				fontFamily      : 'sans-serif',
+				fontSize        : '2em',
+			},
 
-            data : {
-                1 : {name : '', brightness: 0},
-                2 : {name : '', brightness: 0},
-                3 : {name : '', brightness: 0},
-                4 : {name : '', brightness: 0},
-                5 : {name : '', brightness: 0},
-                6 : {name : '', brightness: 0},
-                7 : {name : '', brightness: 0},
-                8 : {name : '', brightness: 0},
-            },
+			data : {
+				1 : {name : '', laser: 0, power: 0, inhib: 1},
+				2 : {name : '', laser: 0, power: 0, inhib: 1},
+				3 : {name : '', laser: 0, power: 0, inhib: 1},
+				4 : {name : '', laser: 0, power: 0, inhib: 1},
+				5 : {name : '', laser: 0, power: 0, inhib: 1},
+				6 : {name : '', laser: 0, power: 0, inhib: 1},
+				7 : {name : '', laser: 0, power: 0, inhib: 1},
+				8 : {name : '', laser: 0, power: 0, inhib: 1},
+			},
 
-            updatePrjName : function (index, name) {
+			updatePrjName : function (index, name) {
 
-                if (prjStatusModuleInternals.data[index].name !== name) {
-                    prjStatusModuleInternals.data[index].name = name;
-                    prjStatusModuleInternals.updateNames();
-                }
-            },
+				if (prjStatusModuleInternals.data[index].name !== name) {
+					prjStatusModuleInternals.data[index].name = name;
+					prjStatusModuleInternals.updateNames();
+				}
+			},
 
-            updateBright : function (index, value) {
+			updateLaser : function (index, value) {
 
-                if (prjStatusModuleInternals.data[index].brightness !== value) {
-                    prjStatusModuleInternals.data[index].brightness = value;
-                    prjStatusModuleInternals.pushBrightUpdate(index);
-                }
-            },
+				if (prjStatusModuleInternals.data[index].laser !== value) {
+					prjStatusModuleInternals.data[index].laser = value;
+					prjStatusModuleInternals.pushLaserUpdate(index);
+				}
+			},
 
-            updateNames : function () {
+			updatePower : function (index, value) {
 
-                Object.keys(prjStatusModuleInternals.data).forEach((prjNum) => {
+				if (prjStatusModuleInternals.data[index].power !== value) {
+					prjStatusModuleInternals.data[index].power = value;
+					prjStatusModuleInternals.pushPowerUpdate(index);
+				}
+			},
 
-                    document.getElementById(`prjName_${prjNum}`).innerText = prjStatusModuleInternals.data[prjNum].name;
+			updateInhib : function (index, value) {
 
-                    if (prjStatusModuleInternals.data[prjNum].name === '') {
+				if (prjStatusModuleInternals.data[index].inhib !== value) {
+					prjStatusModuleInternals.data[index].inhib = value;
+					prjStatusModuleInternals.pushInhibUpdate(index);
+				}
+			},
 
-                        document.getElementById(`prjBright_${prjNum}`).style.display = 'none';
-                    } else {
+			updateNames : function () {
 
-                        document.getElementById(`prjBright_${prjNum}`).style.display = 'block';
-                    }
-                });
-            },
+				Object.keys(prjStatusModuleInternals.data).forEach((prjNum) => {
 
-            updateStyle : function () {
+					document.getElementById(`prjName_${prjNum}`).innerText = prjStatusModuleInternals.data[prjNum].name;
 
-                const _ = prjStatusModuleInternals.settings;
-                const ss = dynamicStyleSheet.sheet;
+					if (prjStatusModuleInternals.data[prjNum].name === '') {
 
-                ss.insertRule(`.container { color: ${ _.textColor }`, ss.cssRules.length);
-                ss.insertRule(`.prj_bright { border-color: ${ _.barOutlineColor }`, ss.cssRules.length);
-                ss.insertRule(`.prj_bright_bar { background-color: ${ _.barColor }`, ss.cssRules.length);
+						document.getElementById(`prjLaser_${prjNum}`).style.display = 'none';
+					} else {
 
-                ss.insertRule(`.prj_name { font-family: ${ _.fontFamily }`, ss.cssRules.length);
-                ss.insertRule(`.prj_name { font-size: ${ _.fontSize }`, ss.cssRules.length);
-		        ss.insertRule(`.prj_bright_val { font-family: ${ _.fontFamily }`, ss.cssRules.length);
-                ss.insertRule(`.prj_bright_val { font-size: ${ _.fontSize }`, ss.cssRules.length);
-            },
+						document.getElementById(`prjLaser_${prjNum}`).style.display = 'block';
+					}
+				});
+			},
 
-            pushBrightUpdate : function (index) {
+			updateStyle : function () {
 
-                const brightness = (100 * prjStatusModuleInternals.data[index].brightness) + '';
+				const _ = prjStatusModuleInternals.settings;
+				const ss = dynamicStyleSheet.sheet;
 
-                const bar = document.getElementById(`prjBrightBar_${index}`);
-                bar.style.width = brightness + '%';
+				ss.insertRule(`.container { color: ${ _.textColor }`, ss.cssRules.length);
+				ss.insertRule(`.prj_laser { border-color: ${ _.barOutlineColor }`, ss.cssRules.length);
+				ss.insertRule(`.prj_laser_bar { background-color: ${ _.barColor }`, ss.cssRules.length);
 
-                document.getElementById(`prjBrightVal_${index}`).innerText = parseInt(brightness, 10) + "%";
-            },
+				ss.insertRule(`.prj_name { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+				ss.insertRule(`.prj_name { font-size: ${ _.fontSize }`, ss.cssRules.length);
+				ss.insertRule(`.header { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+				ss.insertRule(`.header { font-size: ${ _.fontSize }`, ss.cssRules.length);
+				ss.insertRule(`.header { color: ${ _.textColor }`, ss.cssRules.length);
+				ss.insertRule(`.prj_laser_val { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+				ss.insertRule(`.prj_laser_val { font-size: ${ _.fontSize }`, ss.cssRules.length);
+				ss.insertRule(`.prj_power { font-family: ${ _.fontFamily }`, ss.cssRules.length);
+				const halfSize = (parseFloat(_.fontSize) / 2) + _.fontSize.replace(/[\d.]/g, '');
+				ss.insertRule(`.prj_power { font-size: ${ halfSize }`, ss.cssRules.length);
+			},
 
-            loadDefaults : function () {
+			pushLaserUpdate : function (index) {
 
-                document.getElementById('defaultsScriptTag').removeAttribute('src');
-                document.getElementById('defaultsScriptTag').setAttribute('src', 'defaults.js');
+				const laser = (100 * prjStatusModuleInternals.data[index].laser) + '';
 
-                prjStatusModuleInternals.settings = {
-                    ... prjStatusModuleInternals.settings,
-                    ... prjStatusModuleDefaults
-                };
+				const bar = document.getElementById(`prjLaserBar_${index}`);
+				bar.style.width = laser + '%';
 
-                prjStatusModuleInternals.updateStyle();
-            }
-        }
+				document.getElementById(`prjLaserVal_${index}`).innerText = parseInt(laser, 10) + "%";
+			},
 
-        // noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
-        var d3 = {
+			pushInhibUpdate : function (index) {
 
-            // Text Properties
-            prjName1: function (textVal) { prjStatusModuleInternals.updatePrjName(1, textVal); },
-            prjName2: function (textVal) { prjStatusModuleInternals.updatePrjName(2, textVal); },
-            prjName3: function (textVal) { prjStatusModuleInternals.updatePrjName(3, textVal); },
-            prjName4: function (textVal) { prjStatusModuleInternals.updatePrjName(4, textVal); },
-            prjName5: function (textVal) { prjStatusModuleInternals.updatePrjName(5, textVal); },
-            prjName6: function (textVal) { prjStatusModuleInternals.updatePrjName(6, textVal); },
-            prjName7: function (textVal) { prjStatusModuleInternals.updatePrjName(7, textVal); },
-            prjName8: function (textVal) { prjStatusModuleInternals.updatePrjName(8, textVal); },
+				const inhib = prjStatusModuleInternals.data[index].inhib;
+				const laserContainer = document.getElementById(`prjLaser_${index}`);
+				const inhibBar = document.getElementById(`prjInhibBar_${index}`);
 
-            // Number Properties
-            prjBright1: function (value) { prjStatusModuleInternals.updateBright(1, value) },
-            prjBright2: function (value) { prjStatusModuleInternals.updateBright(2, value) },
-            prjBright3: function (value) { prjStatusModuleInternals.updateBright(3, value) },
-            prjBright4: function (value) { prjStatusModuleInternals.updateBright(4, value) },
-            prjBright5: function (value) { prjStatusModuleInternals.updateBright(5, value) },
-            prjBright6: function (value) { prjStatusModuleInternals.updateBright(6, value) },
-            prjBright7: function (value) { prjStatusModuleInternals.updateBright(7, value) },
-            prjBright8: function (value) { prjStatusModuleInternals.updateBright(8, value) },
+				if (inhib !== 1) {
+					laserContainer.style.borderColor = 'red';
+					inhibBar.style.width = ((1 - inhib) * 100) + '%';
+				} else {
+					laserContainer.style.borderColor = prjStatusModuleInternals.settings.barOutlineColor;
+					inhibBar.style.width = '0%';
+				}
+			},
 
-        };
+			pushPowerUpdate : function (index) {
+
+				const raw = Math.round(prjStatusModuleInternals.data[index].power * 255);
+				let label, color;
+				if (raw <= 63) {
+					label = 'STBY';  color = '#800000';
+				} else if (raw <= 191) {
+					label = 'IDLE';  color = '#b5006e';
+				} else {
+					label = 'ON';           color = '#008000';
+				}
+				const el = document.getElementById(`prjPower_${index}`);
+				el.innerText = label;
+				el.style.backgroundColor = color;
+				el.style.display = 'flex';
+			},
+
+			loadDefaults : function () {
+
+				document.getElementById('defaultsScriptTag').removeAttribute('src');
+				document.getElementById('defaultsScriptTag').setAttribute('src', 'defaults.js');
+
+				prjStatusModuleInternals.settings = {
+					... prjStatusModuleInternals.settings,
+					... prjStatusModuleDefaults
+				};
+
+				prjStatusModuleInternals.updateStyle();
+			}
+		}
+
+		// noinspection ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
+		var d3 = {
+
+			// Text Properties
+			prjName1: function (textVal) { prjStatusModuleInternals.updatePrjName(1, textVal); },
+			prjName2: function (textVal) { prjStatusModuleInternals.updatePrjName(2, textVal); },
+			prjName3: function (textVal) { prjStatusModuleInternals.updatePrjName(3, textVal); },
+			prjName4: function (textVal) { prjStatusModuleInternals.updatePrjName(4, textVal); },
+			prjName5: function (textVal) { prjStatusModuleInternals.updatePrjName(5, textVal); },
+			prjName6: function (textVal) { prjStatusModuleInternals.updatePrjName(6, textVal); },
+			prjName7: function (textVal) { prjStatusModuleInternals.updatePrjName(7, textVal); },
+			prjName8: function (textVal) { prjStatusModuleInternals.updatePrjName(8, textVal); },
+
+			// Number Properties
+			prjLaser1: function (value) { prjStatusModuleInternals.updateLaser(1, value) },
+			prjLaser2: function (value) { prjStatusModuleInternals.updateLaser(2, value) },
+			prjLaser3: function (value) { prjStatusModuleInternals.updateLaser(3, value) },
+			prjLaser4: function (value) { prjStatusModuleInternals.updateLaser(4, value) },
+			prjLaser5: function (value) { prjStatusModuleInternals.updateLaser(5, value) },
+			prjLaser6: function (value) { prjStatusModuleInternals.updateLaser(6, value) },
+			prjLaser7: function (value) { prjStatusModuleInternals.updateLaser(7, value) },
+			prjLaser8: function (value) { prjStatusModuleInternals.updateLaser(8, value) },
+
+			// Power Properties
+			prjPower1: function (value) { prjStatusModuleInternals.updatePower(1, value); },
+			prjPower2: function (value) { prjStatusModuleInternals.updatePower(2, value); },
+			prjPower3: function (value) { prjStatusModuleInternals.updatePower(3, value); },
+			prjPower4: function (value) { prjStatusModuleInternals.updatePower(4, value); },
+			prjPower5: function (value) { prjStatusModuleInternals.updatePower(5, value); },
+			prjPower6: function (value) { prjStatusModuleInternals.updatePower(6, value); },
+			prjPower7: function (value) { prjStatusModuleInternals.updatePower(7, value); },
+			prjPower8: function (value) { prjStatusModuleInternals.updatePower(8, value); },
+
+			// Inhib Properties
+			prjInhib1: function (value) { prjStatusModuleInternals.updateInhib(1, value); },
+			prjInhib2: function (value) { prjStatusModuleInternals.updateInhib(2, value); },
+			prjInhib3: function (value) { prjStatusModuleInternals.updateInhib(3, value); },
+			prjInhib4: function (value) { prjStatusModuleInternals.updateInhib(4, value); },
+			prjInhib5: function (value) { prjStatusModuleInternals.updateInhib(5, value); },
+			prjInhib6: function (value) { prjStatusModuleInternals.updateInhib(6, value); },
+			prjInhib7: function (value) { prjStatusModuleInternals.updateInhib(7, value); },
+			prjInhib8: function (value) { prjStatusModuleInternals.updateInhib(8, value); },
+
+		};
 
     </script>
 
@@ -151,6 +225,24 @@
             align-items: center;
         }
 
+        .header {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid white;
+            box-sizing: border-box;
+        }
+
+        .header-title {
+            font-weight: bold;
+            letter-spacing: 0.08em;
+        }
+
+        .header-sub {
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            opacity: 0.75;
+        }
+
         .statusContainer {
             width: 100%;
             flex-grow: 1;
@@ -159,29 +251,58 @@
             min-height: calc(100%/8 - 2em);
         }
 
-        .prj_bright {
+        .prj_laser {
             display: inline-block;
             position: relative;
             border: 3px solid;
             border-radius: 1em;
             flex-grow: 1;
             overflow: hidden;
-	        width: 70%;
+            width: 70%;
         }
 
-        .prj_bright_bar {
+        .prj_laser_bar {
             position: absolute;
             height: 200%;
         }
 
-        .prj_name {
-            min-width: 25%;
-            padding-right: 2em;
+        .prj_inhib_bar {
+            position: absolute;
+            height: 200%;
+            background-color: rgba(255, 0, 0, 0.5);
+            right: 0;
         }
 
-        .prj_bright_val {
-            min-width: 5%;
-            padding-right: 2em;
+        .prj_name {
+            min-width: 25%;
+            padding-right: 0.5em;
+            display: flex;
+            align-items: center;
+        }
+
+        .prj_laser_val {
+            width: 3em;
+            flex-shrink: 0;
+            padding-right: 0.5em;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .prj_power {
+            min-width: 3.5em;
+            padding: 0 0.0em;
+            margin-right: 1em;
+            border-radius: 1em;
+            border: 3px solid;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            background-color: red;
+            color: white;
         }
 
     </style>
@@ -190,79 +311,97 @@
 
 <body style="background:rgba(0, 0, 0, 0); margin:0;">
 
-    <div class="container">
+<div class="container">
 
-        <div id="statusContainer_1" class="statusContainer">
-            <div id="prjName_1" class="prj_name"></div>
-            <div id="prjBrightVal_1" class="prj_bright_val"></div>
-            <div id="prjBright_1" class="prj_bright">
-                <div id="prjBrightBar_1" class="prj_bright_bar"></div>
-            </div>
+    <div class="header"><span class="header-title">Disney's FROZEN</span> <span class="header-sub">S&Co Korea</span></div>
+
+    <div id="statusContainer_1" class="statusContainer">
+        <div id="prjName_1" class="prj_name"></div>
+        <div id="prjPower_1" class="prj_power"></div>
+        <div id="prjLaserVal_1" class="prj_laser_val"></div>
+        <div id="prjLaser_1" class="prj_laser">
+            <div id="prjLaserBar_1" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_1" class="prj_inhib_bar"></div>
         </div>
-
-        <div id="statusContainer_2" class="statusContainer">
-            <div id="prjName_2" class="prj_name"></div>
-            <div id="prjBrightVal_2" class="prj_bright_val"></div>
-            <div id="prjBright_2" class="prj_bright">
-                <div id="prjBrightBar_2" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_3" class="statusContainer">
-            <div id="prjName_3" class="prj_name"></div>
-            <div id="prjBrightVal_3" class="prj_bright_val"></div>
-            <div id="prjBright_3" class="prj_bright">
-                <div id="prjBrightBar_3" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_4" class="statusContainer">
-            <div id="prjName_4" class="prj_name"></div>
-            <div id="prjBrightVal_4" class="prj_bright_val"></div>
-            <div id="prjBright_4" class="prj_bright">
-                <div id="prjBrightBar_4" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_5" class="statusContainer">
-            <div id="prjName_5" class="prj_name"></div>
-            <div id="prjBrightVal_5" class="prj_bright_val"></div>
-            <div id="prjBright_5" class="prj_bright">
-                <div id="prjBrightBar_5" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_6" class="statusContainer">
-            <div id="prjName_6" class="prj_name"></div>
-            <div id="prjBrightVal_6" class="prj_bright_val"></div>
-            <div id="prjBright_6" class="prj_bright">
-                <div id="prjBrightBar_6" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_7" class="statusContainer">
-            <div id="prjName_7" class="prj_name"></div>
-            <div id="prjBrightVal_7" class="prj_bright_val"></div>
-            <div id="prjBright_7" class="prj_bright">
-                <div id="prjBrightBar_7" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
-        <div id="statusContainer_8" class="statusContainer">
-            <div id="prjName_8" class="prj_name"></div>
-            <div id="prjBrightVal_8" class="prj_bright_val"></div>
-            <div id="prjBright_8" class="prj_bright">
-                <div id="prjBrightBar_8" class="prj_bright_bar"></div>
-            </div>
-        </div>
-
     </div>
 
-    <script>
+    <div id="statusContainer_2" class="statusContainer">
+        <div id="prjName_2" class="prj_name"></div>
+        <div id="prjPower_2" class="prj_power"></div>
+        <div id="prjLaserVal_2" class="prj_laser_val"></div>
+        <div id="prjLaser_2" class="prj_laser">
+            <div id="prjLaserBar_2" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_2" class="prj_inhib_bar"></div>
+        </div>
+    </div>
 
-        prjStatusModuleInternals.loadDefaults();
+    <div id="statusContainer_3" class="statusContainer">
+        <div id="prjName_3" class="prj_name"></div>
+        <div id="prjPower_3" class="prj_power"></div>
+        <div id="prjLaserVal_3" class="prj_laser_val"></div>
+        <div id="prjLaser_3" class="prj_laser">
+            <div id="prjLaserBar_3" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_3" class="prj_inhib_bar"></div>
+        </div>
+    </div>
 
-    </script>
+    <div id="statusContainer_4" class="statusContainer">
+        <div id="prjName_4" class="prj_name"></div>
+        <div id="prjPower_4" class="prj_power"></div>
+        <div id="prjLaserVal_4" class="prj_laser_val"></div>
+        <div id="prjLaser_4" class="prj_laser">
+            <div id="prjLaserBar_4" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_4" class="prj_inhib_bar"></div>
+        </div>
+    </div>
+
+    <div id="statusContainer_5" class="statusContainer">
+        <div id="prjName_5" class="prj_name"></div>
+        <div id="prjPower_5" class="prj_power"></div>
+        <div id="prjLaserVal_5" class="prj_laser_val"></div>
+        <div id="prjLaser_5" class="prj_laser">
+            <div id="prjLaserBar_5" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_5" class="prj_inhib_bar"></div>
+        </div>
+    </div>
+
+    <div id="statusContainer_6" class="statusContainer">
+        <div id="prjName_6" class="prj_name"></div>
+        <div id="prjPower_6" class="prj_power"></div>
+        <div id="prjLaserVal_6" class="prj_laser_val"></div>
+        <div id="prjLaser_6" class="prj_laser">
+            <div id="prjLaserBar_6" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_6" class="prj_inhib_bar"></div>
+        </div>
+    </div>
+
+    <div id="statusContainer_7" class="statusContainer">
+        <div id="prjName_7" class="prj_name"></div>
+        <div id="prjPower_7" class="prj_power"></div>
+        <div id="prjLaserVal_7" class="prj_laser_val"></div>
+        <div id="prjLaser_7" class="prj_laser">
+            <div id="prjLaserBar_7" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_7" class="prj_inhib_bar"></div>
+        </div>
+    </div>
+
+    <div id="statusContainer_8" class="statusContainer">
+        <div id="prjName_8" class="prj_name"></div>
+        <div id="prjPower_8" class="prj_power"></div>
+        <div id="prjLaserVal_8" class="prj_laser_val"></div>
+        <div id="prjLaser_8" class="prj_laser">
+            <div id="prjLaserBar_8" class="prj_laser_bar"></div>
+            <div id="prjInhibBar_8" class="prj_inhib_bar"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+	prjStatusModuleInternals.loadDefaults();
+
+</script>
 
 </body>
 
