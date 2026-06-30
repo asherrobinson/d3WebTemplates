@@ -6,6 +6,10 @@
 
 const prjStatusModuleDefaults = {
 
+    // Show Details
+    showTitle : "",
+    showSubtitle: "",
+
     // Default Colors - use any valid CSS color syntax: 'name', '#00AA33', 'rgba(128, 255, 32, 0.5)', etc.
     textColor       : 'white',
     barOutlineColor : 'white',
@@ -15,4 +19,6 @@ const prjStatusModuleDefaults = {
     fontFamily : 'Futura,sans-serif',
     fontSize   : '2em',
 
+    // Special Behavior
+    useWeirdFrozenBehavior : false,
 };

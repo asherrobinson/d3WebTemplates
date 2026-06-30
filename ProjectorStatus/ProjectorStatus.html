@@ -12,9 +12,9 @@
 		 * DISCOPIXEL PRODUCTIONS INC.
 		 * D3ProjectorStatus Web Module
 		 * Author: A. Robinson
-		 * Updated: 10 JUN 2024
+		 * Updated: 28 JUN 2026
 		 * Reproduction & Redistribution prohibited without express written permission
-		 * © 2024 - All rights reserved
+		 * © 2026 - All rights reserved
 		 */
 
 		const dynamicStyleSheet = document.createElement('style');
@@ -23,11 +23,14 @@
 		const prjStatusModuleInternals = {
 
 			settings : {
+				showTitle : "",
+				showSubtitle: "",
 				textColor       : 'white',
 				barOutlineColor : 'white',
 				barColor        : 'white',
 				fontFamily      : 'sans-serif',
 				fontSize        : '2em',
+				useWeirdFrozenBehavior : false,
 			},
 
 			data : {
@@ -110,6 +113,23 @@
 				ss.insertRule(`.prj_power { font-size: ${ halfSize }`, ss.cssRules.length);
 			},
 
+            updateTitles : function () {
+				const _ = prjStatusModuleInternals.settings;
+				const ss = dynamicStyleSheet.sheet;
+
+				if (
+					_.showTitle ||
+                    _.showSubtitle
+                ) {
+					document.getElementById('header-title').innerText(_.showTitle)
+					document.getElementById('header-sub').innerText(_.showSubtitle)
+
+				} else {
+
+					ss.insertRule(`.header { display:none`, ss.cssRules.length);
+				}
+            },
+
 			pushLaserUpdate : function (index) {
 
 				const laser = (100 * prjStatusModuleInternals.data[index].laser) + '';
@@ -126,26 +146,52 @@
 				const laserContainer = document.getElementById(`prjLaser_${index}`);
 				const inhibBar = document.getElementById(`prjInhibBar_${index}`);
 
-				if (inhib !== 1) {
-					laserContainer.style.borderColor = 'red';
-					inhibBar.style.width = ((1 - inhib) * 100) + '%';
-				} else {
-					laserContainer.style.borderColor = prjStatusModuleInternals.settings.barOutlineColor;
-					inhibBar.style.width = '0%';
-				}
+				if (prjStatusModuleInternals.settings.useWeirdFrozenBehavior) {
+
+					if (inhib < 0.5) {
+						// Force Off
+						laserContainer.style.borderColor = 'red';
+						inhibBar.style.width = '100%';
+						inhibBar.style.backgroundColor = 'rgba(0, 255, 0, 0.5)';
+                    } else if (inhib === 0.5) {
+						// D3 Control
+						laserContainer.style.borderColor = prjStatusModuleInternals.settings.barOutlineColor;
+						inhibBar.style.width = '0%';
+                    } else {
+						// Force On
+						laserContainer.style.borderColor = 'green';
+						inhibBar.style.width = '100%';
+						inhibBar.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+                    }
+
+                } else {
+
+					if (inhib !== 1) {
+						laserContainer.style.borderColor = 'red';
+						inhibBar.style.width = ((1 - inhib) * 100) + '%';
+					} else {
+						laserContainer.style.borderColor = prjStatusModuleInternals.settings.barOutlineColor;
+						inhibBar.style.width = '0%';
+					}
+                }
 			},
 
 			pushPowerUpdate : function (index) {
 
 				const raw = Math.round(prjStatusModuleInternals.data[index].power * 255);
 				let label, color;
+
 				if (raw <= 63) {
-					label = 'STBY';  color = '#800000';
+					label = 'STBY';
+					color = '#800000';
 				} else if (raw <= 191) {
-					label = 'IDLE';  color = '#b5006e';
+					label = 'IDLE';
+					color = '#b5006e';
 				} else {
-					label = 'ON';           color = '#008000';
+					label = 'ON';
+					color = '#008000';
 				}
+
 				const el = document.getElementById(`prjPower_${index}`);
 				el.innerText = label;
 				el.style.backgroundColor = color;
@@ -163,6 +209,7 @@
 				};
 
 				prjStatusModuleInternals.updateStyle();
+				prjStatusModuleInternals.updateTitles();
 			}
 		}
 
@@ -313,7 +360,9 @@
 
 <div class="container">
 
-    <div class="header"><span class="header-title">Disney's FROZEN</span> <span class="header-sub">S&Co Korea</span></div>
+    <div class="header">
+        <span class="header-title" id="header-title">Disney's FROZEN</span> <span class="header-sub" id="header-sub">S&Co Korea</span>
+    </div>
 
     <div id="statusContainer_1" class="statusContainer">
         <div id="prjName_1" class="prj_name"></div>
